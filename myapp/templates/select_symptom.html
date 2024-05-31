@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Your Symptoms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        textarea, input, select, button {
+            display: block;
+            margin: 10px auto;
+        }
+        video {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Your Symptoms</h1>
+
+        <form id="symptomForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="button" onclick="startCamera()">Take Photo</button>
+            <video id="video" width="320" height="240" autoplay></video>
+            <canvas id="canvas" width="320" height="240" style="display: none;"></canvas><br>
+            <img id="photoPreview" width="320" height="240"><br>
+            <input type="hidden" id="photoData" name="photo_data"><br>
+            <button type="button" onclick="startRecording()">Start Recording</button>
+            <button type="button" onclick="stopRecording()">Stop Recording</button>
+            <audio id="audio" controls></audio><br>
+            <input type="hidden" id="audioData" name="audio_data"><br>
+            <button type="submit">Submit Symptom</button>
+        </form>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let recordedBlobs = [];
+        let videoStream;
+
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    videoStream = stream;
+                    const videoElement = document.getElementById('video');
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error accessing camera:', error);
+                });
+        }
+
+        function takePhoto() {
+            const videoElement = document.getElementById('video');
+            const canvasElement = document.getElementById('canvas');
+            const photoDataElement = document.getElementById('photoData');
+            const photoPreviewElement = document.getElementById('photoPreview');
+
+            canvasElement.getContext('2d').drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            const dataUrl = canvasElement.toDataURL('image/png');
+            photoDataElement.value = dataUrl;
+            photoPreviewElement.src = dataUrl;
+
+            // Stop the video stream
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoElement.style.display = 'none';
+            }
+        }
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    recordedBlobs = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data && event.data.size > 0) {
+                            recordedBlobs.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.start();
+                })
+                .catch(error => {
+                    console.error('Error accessing audio:', error);
+                });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.onstop = () => {
+                    const audioElement = document.getElementById('audio');
+                    const audioDataElement = document.getElementById('audioData');
+
+                    const blob = new Blob(recordedBlobs, { type: 'audio/mp3' });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64Data = reader.result.split(',')[1];
+                        audioDataElement.value = `data:audio/mp3;base64,${base64Data}`;
+                    };
+                    reader.readAsDataURL(blob);
+
+                    const dataUrl = URL.createObjectURL(blob);
+                    audioElement.src = dataUrl;
+                };
+            }
+        }
+
+        document.getElementById('symptomForm').addEventListener('submit', (e) => {
+            takePhoto();
+            stopRecording();
+        });
+    </script>
+</body>
+</html>

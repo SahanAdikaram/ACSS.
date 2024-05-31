@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Symptoms Over Time</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .symptom-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .symptom-list li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Symptoms Over Time</h1>
+    <ul class="symptom-list">
+        {% for record in symptom_records %}
+        <li>
+            <strong>Timestamp:</strong> {{ record.timestamp }}<br>
+            <strong>Symptom Type:</strong> {{ record.symptom_type }}<br>
+            <strong>Description:</strong> {{ record.description }}<br>
+            <strong>Severity:</strong> {{ record.severity }}<br>
+            {% if record.multiple_choice %}
+            <strong>Multiple Choice:</strong> {{ record.multiple_choice }}<br>
+            {% endif %}
+            {% if record.voice_record %}
+            <strong>Audio:</strong> <br>
+            <audio controls>
+                <source src="{{ record.voice_record.url }}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            <br>
+            {% endif %}
+            {% if record.photo %}
+            <strong>Photo:</strong> <br>
+            <img src="{{ record.photo.url }}" alt="Symptom Photo" width="320" height="240">
+            <br>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

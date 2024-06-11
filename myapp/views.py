@@ -22,7 +22,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('select_mood')  # Redirect to select_mood after registration
+            return redirect('select_mood')  
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
@@ -36,7 +36,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('select_mood')  # Redirect to select_mood after login
+                return redirect('select_mood') 
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})

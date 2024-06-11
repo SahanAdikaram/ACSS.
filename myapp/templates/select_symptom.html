@@ -1,126 +1,129 @@
+<!-- templates/select_symptom.html -->
+{% extends 'base.html' %}
+
+{% block content %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Select Your Symptoms</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
         .container {
             width: 80%;
             margin: 0 auto;
+            text-align: left;
         }
         textarea, input, select, button {
             display: block;
-            margin: 10px auto;
+            margin: 10px 0;
+            width: 100%;
         }
-        video {
-            display: none;
+        .form-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Enter Your Symptoms</h1>
-
-        <form id="symptomForm" method="post" enctype="multipart/form-data">
+        <form id="symptomForm" method="post" action="{% url 'select_symptom' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="button" onclick="startCamera()">Take Photo</button>
-            <video id="video" width="320" height="240" autoplay></video>
-            <canvas id="canvas" width="320" height="240" style="display: none;"></canvas><br>
-            <img id="photoPreview" width="320" height="240"><br>
-            <input type="hidden" id="photoData" name="photo_data"><br>
-            <button type="button" onclick="startRecording()">Start Recording</button>
-            <button type="button" onclick="stopRecording()">Stop Recording</button>
-            <audio id="audio" controls></audio><br>
-            <input type="hidden" id="audioData" name="audio_data"><br>
+            
+            <!-- Hallucinations and Delusions Form -->
+            <div class="form-section">
+                <h2>Hallucinations and Delusions</h2>
+                <label>{{ hallucinations_form.hallucinations_q1.label }}</label>
+                {{ hallucinations_form.hallucinations_q1 }}
+                <label>{{ hallucinations_form.hallucinations_q2.label }}</label>
+                {{ hallucinations_form.hallucinations_q2 }}
+                <label>{{ hallucinations_form.hallucinations_q3.label }}</label>
+                {{ hallucinations_form.hallucinations_q3 }}
+                <label>{{ hallucinations_form.hallucinations_q4.label }}</label>
+                {{ hallucinations_form.hallucinations_q4 }}
+                <label>{{ hallucinations_form.description.label }}</label>
+                {{ hallucinations_form.description }}
+                <label>{{ hallucinations_form.severity.label }}</label>
+                {{ hallucinations_form.severity }}
+            </div>
+
+            <!-- Affective Flattening and Alogia Form -->
+            <div class="form-section">
+                <h2>Affective Flattening and Alogia</h2>
+                <label>{{ flattening_form.flattening_q1.label }}</label>
+                {{ flattening_form.flattening_q1 }}
+                <label>{{ flattening_form.flattening_q2.label }}</label>
+                {{ flattening_form.flattening_q2 }}
+                <label>{{ flattening_form.flattening_q3.label }}</label>
+                {{ flattening_form.flattening_q3 }}
+                <label>{{ flattening_form.flattening_q4.label }}</label>
+                {{ flattening_form.flattening_q4 }}
+                <label>{{ flattening_form.description.label }}</label>
+                {{ flattening_form.description }}
+                <label>{{ flattening_form.severity.label }}</label>
+                {{ flattening_form.severity }}
+            </div>
+
+            <!-- Avolition Form -->
+            <div class="form-section">
+                <h2>Avolition</h2>
+                <label>{{ avolition_form.avolition_q1.label }}</label>
+                {{ avolition_form.avolition_q1 }}
+                <label>{{ avolition_form.avolition_q2.label }}</label>
+                {{ avolition_form.avolition_q2 }}
+                <label>{{ avolition_form.description.label }}</label>
+                {{ avolition_form.description }}
+                <label>{{ avolition_form.severity.label }}</label>
+                {{ avolition_form.severity }}
+            </div>
+
+            <!-- Difficulty Concentrating, Memory Task Achievement, Decision Making Difficulties Form -->
+            <div class="form-section">
+                <h2>Difficulty Concentrating, Memory Task Achievement, Decision Making Difficulties</h2>
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q1.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q1 }}
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q2.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q2 }}
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q3.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q3 }}
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q4.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q4 }}
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q5.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q5 }}
+                <label>{{ difficulty_concentrating_form.difficulty_concentrating_q6.label }}</label>
+                {{ difficulty_concentrating_form.difficulty_concentrating_q6 }}
+                <label>{{ difficulty_concentrating_form.description.label }}</label>
+                {{ difficulty_concentrating_form.description }}
+                <label>{{ difficulty_concentrating_form.severity.label }}</label>
+                {{ difficulty_concentrating_form.severity }}
+            </div>
+
+            <!-- Difficulties in Social Cognition Form -->
+            <div class="form-section">
+                <h2>Difficulties in Social Cognition</h2>
+                <label>{{ social_cognition_form.social_cognition_q1.label }}</label>
+                {{ social_cognition_form.social_cognition_q1 }}
+                <label>{{ social_cognition_form.social_cognition_q2.label }}</label>
+                {{ social_cognition_form.social_cognition_q2 }}
+                <label>{{ social_cognition_form.description.label }}</label>
+                {{ social_cognition_form.description }}
+                <label>{{ social_cognition_form.severity.label }}</label>
+                {{ social_cognition_form.severity }}
+            </div>
+
             <button type="submit">Submit Symptom</button>
         </form>
     </div>
-
-    <script>
-        let mediaRecorder;
-        let recordedBlobs = [];
-        let videoStream;
-
-        function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    videoStream = stream;
-                    const videoElement = document.getElementById('video');
-                    videoElement.srcObject = stream;
-                    videoElement.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error accessing camera:', error);
-                });
-        }
-
-        function takePhoto() {
-            const videoElement = document.getElementById('video');
-            const canvasElement = document.getElementById('canvas');
-            const photoDataElement = document.getElementById('photoData');
-            const photoPreviewElement = document.getElementById('photoPreview');
-
-            canvasElement.getContext('2d').drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-            const dataUrl = canvasElement.toDataURL('image/png');
-            photoDataElement.value = dataUrl;
-            photoPreviewElement.src = dataUrl;
-
-            // Stop the video stream
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-                videoElement.style.display = 'none';
-            }
-        }
-
-        function startRecording() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    mediaRecorder = new MediaRecorder(stream);
-                    recordedBlobs = [];
-
-                    mediaRecorder.ondataavailable = event => {
-                        if (event.data && event.data.size > 0) {
-                            recordedBlobs.push(event.data);
-                        }
-                    };
-
-                    mediaRecorder.start();
-                })
-                .catch(error => {
-                    console.error('Error accessing audio:', error);
-                });
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                mediaRecorder.onstop = () => {
-                    const audioElement = document.getElementById('audio');
-                    const audioDataElement = document.getElementById('audioData');
-
-                    const blob = new Blob(recordedBlobs, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const base64Data = reader.result.split(',')[1];
-                        audioDataElement.value = `data:audio/mp3;base64,${base64Data}`;
-                    };
-                    reader.readAsDataURL(blob);
-
-                    const dataUrl = URL.createObjectURL(blob);
-                    audioElement.src = dataUrl;
-                };
-            }
-        }
-
-        document.getElementById('symptomForm').addEventListener('submit', (e) => {
-            takePhoto();
-            stopRecording();
-        });
-    </script>
 </body>
 </html>
+{% endblock %}

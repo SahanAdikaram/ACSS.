@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mood Tracker</title>
+    <title>ACSS</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,10 +24,13 @@
 </head>
 <body>
     <div class="nav">
-        <a href="/">Select Mood</a>
-        <a href="/view_feedback/">Feedback</a>
-        <a href="/view_statistics/">Statistics</a>
-        <a href="/view_settings/">Settings</a>
+        <a href="{% url 'select_mood' %}">Select Mood</a>
+        <a href="{% url 'view_feedback' %}">Feedback</a>
+        <a href="{% url 'view_statistics' %}">Statistics</a>
+        <a href="{% url 'view_settings' %}">Settings</a>
+        <a href="{% url 'select_symptom' %}">Select Symptom</a>
+        <a href="{% url 'view_symptoms' %}">View Symptoms</a>
+        <a href="{% url 'logout' %}">Logout</a>
     </div>
     {% block content %}
     {% endblock %}

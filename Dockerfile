@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set the working directory in the container
-WORKDIR /workspaces/HI-3-INNOVATION-AND-COMPLEXITY-MANAGEMENT
+WORKDIR /workspaces/ACSS
 
 # Copy the requirements file into the container
 COPY requirements.txt .

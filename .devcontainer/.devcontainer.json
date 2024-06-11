@@ -2,7 +2,7 @@
   "name": "Django Development",
   "build": {
     "context": "..",
-    "dockerfile": "Dockerfile"
+    "dockerfile": ".devcontainer/Dockerfile"
   },
   "forwardPorts": [8000],
   "postCreateCommand": "docker-compose up --build -d",

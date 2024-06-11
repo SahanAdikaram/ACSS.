@@ -1,22 +1,25 @@
-FROM python:3.11-slim
+# Use the official Python image as a base image
+FROM python:3.11
 
-# Set the working directory
-WORKDIR /app
+# Set environment variables to prevent .pyc files and enable unbuffered output
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Copy the requirements file
+# Set the working directory in the container
+WORKDIR /workspaces/HI-3-INNOVATION-AND-COMPLEXITY-MANAGEMENT
+
+# Copy the requirements file into the container
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Copy the project files
+# Copy the rest of the application code into the container
 COPY . .
 
-# Make the entrypoint script executable
-RUN chmod +x entrypoint.sh
-
-# Specify the entrypoint script
-ENTRYPOINT ["./entrypoint.sh"]
+# Expose port 8000 for the Django development server
+EXPOSE 8000
 
 # Run the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./entrypoint.sh"]

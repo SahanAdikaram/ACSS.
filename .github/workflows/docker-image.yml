@@ -23,7 +23,7 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       with:
-        region: ${{ secrets.AWS_REGION }}
+        registry: ${{ secrets.ECR_REGISTRY }}
 
     - name: Build and push Docker image
       id: build-and-push

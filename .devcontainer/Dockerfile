@@ -22,4 +22,4 @@ COPY . .
 RUN chmod +x entrypoint.sh
 
 # Specify the entrypoint script
-ENTRYPOINT [" ../entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

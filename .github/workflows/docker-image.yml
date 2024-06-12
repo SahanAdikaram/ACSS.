@@ -35,4 +35,4 @@ jobs:
           tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/acss:latest
 
       - name: Image digest
-        run: echo "Image digest: ${{ steps.build-and-push.outputs.digest }}"
+        run: echo "${{ steps.build-and-push.outputs.digest }}"

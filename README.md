@@ -14,3 +14,4 @@ $ python manage.py migrate
 You can now run the development server:
 
 $ python manage.py runserver
+for api endpoint please refer to myapp/urls.py

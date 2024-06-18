@@ -1,74 +1,114 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from .models import SymptomRecord
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import SymptomRecord, CustomUser, DoctorPatientRelationship, DoctorFeedback
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
+    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, required=True)
 
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2', 'role']
 
-class HallucinationsForm(forms.ModelForm):
-    hallucinations_q1 = forms.ChoiceField(choices=[('A', 'Frequently'), ('B', 'Occasionally'), ('C', 'Rarely'), ('D', 'Never')], label="Question 1: In the past week, has the patient reported hearing voices that others do not hear?")
-    hallucinations_q2 = forms.ChoiceField(choices=[('A', 'Yes, frequently'), ('B', 'Yes, a few times'), ('C', 'Yes, once'), ('D', 'No, never')], label="Question 2: Has the patient seen things that others cannot see within the last month?")
-    hallucinations_q3 = forms.ChoiceField(choices=[('A', 'Yes, always'), ('B', 'Yes, sometimes'), ('C', 'Yes, but rarely'), ('D', 'No, never')], label="Question 3: Does the patient believe they have special powers or abilities that others do not possess?")
-    hallucinations_q4 = forms.ChoiceField(choices=[('A', 'Often'), ('B', 'Occasionally'), ('C', 'Seldom'), ('D', 'Never')], label="Question 4: Has the patient expressed fear that others are plotting against them or trying to harm them?")
+class LoginForm(AuthenticationForm):
+    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, required=True)
     
     class Meta:
+        model = CustomUser
+        fields = ['username', 'password', 'role']
+
+class HallucinationsForm(forms.ModelForm):
+    hearing_voices = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Hearing Voices")
+    seeing_unreal_objects = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Seeing Unreal Objects")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
         model = SymptomRecord
-        fields = ['description', 'severity']
+        fields = ['hearing_voices', 'seeing_unreal_objects', 'severity']
         widgets = {
-            'mcq_answers': forms.HiddenInput()  # Store the JSON data in a hidden field
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class DelusionsForm(forms.ModelForm):
+    special_powers = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Special Powers")
+    fear_of_plots = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Fear of Plots")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
+        model = SymptomRecord
+        fields = ['special_powers', 'fear_of_plots', 'severity']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
 class FlatteningForm(forms.ModelForm):
-    flattening_q1 = forms.ChoiceField(choices=[('A', 'Very often'), ('B', 'Sometimes'), ('C', 'Rarely'), ('D', 'Never')], label="Question 1: How often does the patient display a lack of emotional expression (e.g., not smiling, lack of facial expressions)?")
-    flattening_q2 = forms.ChoiceField(choices=[('A', 'Frequently'), ('B', 'Occasionally'), ('C', 'Rarely'), ('D', 'Never')], label="Question 2: Has the patient shown a reduced ability to express emotions (e.g., through gestures, tone of voice) recently?")
-    flattening_q3 = forms.ChoiceField(choices=[('A', 'Very frequently'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 3: Has the patient been speaking less frequently or with fewer words than usual?")
-    flattening_q4 = forms.ChoiceField(choices=[('A', 'Yes, very often'), ('B', 'Yes, sometimes'), ('C', 'Yes, but rarely'), ('D', 'No, never')], label="Question 4: Does the patient often have difficulty finding the right words to express themselves?")
-    
+    lack_of_emotion = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Lack of Emotion")
+    reduced_speech = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Reduced Speech")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
     class Meta:
         model = SymptomRecord
-        fields = ['description', 'severity']
+        fields = ['lack_of_emotion', 'reduced_speech', 'severity']
         widgets = {
-            'mcq_answers': forms.HiddenInput()
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
 class AvolitionForm(forms.ModelForm):
-    avolition_q1 = forms.ChoiceField(choices=[('A', 'Very often'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 1: Has the patient shown a lack of motivation to start or complete tasks?")
-    avolition_q2 = forms.ChoiceField(choices=[('A', 'Almost always'), ('B', 'Frequently'), ('C', 'Occasionally'), ('D', 'Never')], label="Question 2: How often does the patient seem uninterested in participating in daily activities?")
-    
+    lack_of_motivation = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Lack of Motivation")
+    disinterest_in_activities = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Disinterest in Activities")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
     class Meta:
         model = SymptomRecord
-        fields = ['description', 'severity']
+        fields = ['lack_of_motivation', 'disinterest_in_activities', 'severity']
         widgets = {
-            'mcq_answers': forms.HiddenInput()
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
-class DifficultyConcentratingForm(forms.ModelForm):
-    difficulty_concentrating_q1 = forms.ChoiceField(choices=[('A', 'Very often'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 1: Has the patient had trouble concentrating on tasks or conversations recently?")
-    difficulty_concentrating_q2 = forms.ChoiceField(choices=[('A', 'Always'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 2: How frequently does the patient appear easily distracted?")
-    difficulty_concentrating_q3 = forms.ChoiceField(choices=[('A', 'Very frequently'), ('B', 'Often'), ('C', 'Occasionally'), ('D', 'Never')], label="Question 3: Does the patient have difficulty remembering appointments or daily tasks?")
-    difficulty_concentrating_q4 = forms.ChoiceField(choices=[('A', 'Very often'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 4: How often does the patient forget recent conversations or events?")
-    difficulty_concentrating_q5 = forms.ChoiceField(choices=[('A', 'Very frequently'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 5: Has the patient shown indecisiveness or difficulty making decisions?")
-    difficulty_concentrating_q6 = forms.ChoiceField(choices=[('A', 'Almost always'), ('B', 'Often'), ('C', 'Occasionally'), ('D', 'Never')], label="Question 6: How often does the patient take a long time to make simple decisions?")
-    
+class ConcentrationMemoryForm(forms.ModelForm):
+    trouble_concentrating = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Trouble Concentrating")
+    forgetfulness = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Forgetfulness")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
     class Meta:
         model = SymptomRecord
-        fields = ['description', 'severity']
+        fields = ['trouble_concentrating', 'forgetfulness', 'severity']
         widgets = {
-            'mcq_answers': forms.HiddenInput()
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
 class SocialCognitionForm(forms.ModelForm):
-    social_cognition_q1 = forms.ChoiceField(choices=[('A', 'Very often'), ('B', 'Often'), ('C', 'Sometimes'), ('D', 'Never')], label="Question 1: Has the patient had trouble understanding social cues or body language?")
-    social_cognition_q2 = forms.ChoiceField(choices=[('A', 'Very frequently'), ('B', 'Often'), ('C', 'Occasionally'), ('D', 'Never')], label="Question 2: How frequently does the patient struggle to engage in social interactions or maintain relationships?")
-    
+    social_cues = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Social Cues")
+    social_interaction_issues = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], label="Social Interaction Issues")
+    severity = forms.IntegerField(widget=forms.HiddenInput())
+
     class Meta:
         model = SymptomRecord
-        fields = ['description', 'severity']
+        fields = ['social_cues', 'social_interaction_issues', 'severity']
         widgets = {
-            'mcq_answers': forms.HiddenInput()
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
+
+class AssignDoctorForm(forms.ModelForm):
+    doctor = forms.ModelChoiceField(queryset=CustomUser.objects.filter(role='doctor'), required=True, label="Select Doctor")
+
+    class Meta:
+        model = DoctorPatientRelationship
+        fields = ['doctor']
+
+class DoctorFeedbackForm(forms.ModelForm):
+    class Meta:
+        model = DoctorFeedback
+        fields = ['feedback']
+        
+
+class AddPatientForm(forms.Form):
+    patient_username = forms.CharField(max_length=150, required=True, label="Patient Username")
+
+    def clean_patient_username(self):
+        username = self.cleaned_data.get('patient_username')
+        try:
+            patient = CustomUser.objects.get(username=username, role='patient')
+        except CustomUser.DoesNotExist:
+            raise forms.ValidationError("No patient found with this username.")
+        return patient
